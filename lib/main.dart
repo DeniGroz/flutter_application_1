@@ -1,5 +1,6 @@
 //import 'dart:html';
 
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -22,11 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
- 
-
-
   int _currentIndex = 0;
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +48,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-
-
       body: _buildBody(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
@@ -79,53 +74,68 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-
-
   Widget _buildBody() {
     if (_currentIndex == 0) {
       return FeedPage();
     } else if (_currentIndex == 1) {
       return ProfilePage();
-    } 
-    else {
+    } else {
       return FeedPage();
     }
   }
 }
 
-
-class FeedPage extends StatelessWidget {
+class FeedPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/Distillbackground.png'),
-                fit: BoxFit.cover,
-              ),
-            ),
-            child: SearchBar(onSearch: (value) {
-              
-            }),
-          ),
-          Expanded(
-            child: PostFeed(),
-          ),
-        ],
-      ),
-
-
-
-
-
-    );
-  }
+  _FeedPageState createState() => _FeedPageState();
 }
 
+class _FeedPageState extends State<FeedPage> {
+  late List<Post> shownPosts;
 
+  @override
+  void initState() {
+    super.initState();
+    shownPosts = List.from(dummyPosts);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/Distillbackground.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: SearchBar(onSearch: filterPosts),
+        ),
+        Expanded(
+          child: PostFeed(shownPosts: shownPosts),
+        ),
+      ],
+    );
+  }
+
+  void filterPosts(String query) {
+    if (query.isNotEmpty) {
+      final filteredPosts = dummyPosts
+          .where((post) =>
+              post.caption.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+      filteredPosts.sort((a, b) => b.upvotes.compareTo(a.upvotes));
+      setState(() {
+        shownPosts = filteredPosts;
+      });
+    } else {
+      setState(() {
+        shownPosts = List.from(dummyPosts);
+      });
+    }
+  }
+}
 
 class ProfilePage extends StatelessWidget {
   @override
@@ -134,26 +144,21 @@ class ProfilePage extends StatelessWidget {
       child: Column(
         children: [
           CircleAvatar(
-            // Add profile picture logic here
             backgroundImage: AssetImage('assets/profileimage1.png'),
             radius: 50.0,
           ),
           Text(
-            // Add biography text here
             'May Green',
             style: TextStyle(
               fontSize: 24.0,
               fontWeight: FontWeight.bold,
             ),
           ),
-          // Add more profile information as needed
         ],
       ),
     );
   }
 }
-
-
 
 class SearchBar extends StatefulWidget {
   final Function(String) onSearch;
@@ -185,7 +190,9 @@ class _SearchBarState extends State<SearchBar> {
       padding: EdgeInsets.all(8.0),
       child: TextField(
         controller: _searchController,
-        onChanged: filterPosts,
+        onChanged: (query) {
+          widget.onSearch(query);
+        },
         decoration: InputDecoration(
           hintText: 'Search for a problem or product...',
           prefixIcon: Icon(Icons.search),
@@ -193,6 +200,7 @@ class _SearchBarState extends State<SearchBar> {
             icon: Icon(Icons.clear),
             onPressed: () {
               _searchController.clear();
+              widget.onSearch(''); // Clear the search query
             },
           ),
           border: OutlineInputBorder(
@@ -206,43 +214,12 @@ class _SearchBarState extends State<SearchBar> {
       ),
     );
   }
-
-  void filterPosts(String query) {
-    if (query.isNotEmpty) {
-        
-          final filteredPosts = dummyPosts.where((post) {
-          final postLower = post.caption.toLowerCase();
-          final searchLower = query.toLowerCase();
-          return postLower.contains(searchLower);
-        }).toList();
-        filteredPosts.sort((a, b) => b.upvotes.compareTo(a.upvotes));
-        setState(() {
-          shownPosts = filteredPosts;
-        });
-    } else {
-      setState(() {
-        shownPosts = dummyPosts;
-      });
-    }
-  }
-//  void _updatePosts(String query) {
-////    setState(() {
- //     filteredPosts = posts;
- //   });
- // }
-
-
 }
 
-class PostFeed extends StatefulWidget {
-  @override
-  _PostFeedState createState() => _PostFeedState();
-}
+class PostFeed extends StatelessWidget {
+  final List<Post> shownPosts;
 
-
-class _PostFeedState extends State<PostFeed> {
-
-  //List<Post> filteredPosts = dummyPosts;
+  PostFeed({required this.shownPosts});
 
   @override
   Widget build(BuildContext context) {
@@ -303,9 +280,9 @@ class _PostFeedState extends State<PostFeed> {
                     IconButton(
                       icon: Icon(Icons.thumb_up),
                       onPressed: () {
-                        setState(() {
-                          post.upvotes++;
-                        });
+                        // Update the upvotes locally
+                        post.upvotes++;
+                        // You may want to send the updated post to a backend server here
                       },
                     ),
                     SizedBox(width: 8.0),
@@ -324,128 +301,6 @@ class _PostFeedState extends State<PostFeed> {
       },
     );
   }
-    
-  
-
-
-  
-  //List<Post> get filteredPosts {
-  //  final query = ModalRoute.of(context)!.settings.arguments as String;
-  //  return dummyPosts.where((post) {
-  //    final postLower = post.caption.toLowerCase();
-  //    final searchLower = query.toLowerCase();
-  //    return postLower.contains(searchLower);
-  //  }).toList();
-  //}
-
-
-}
-
-
-//      return ListView.builder(
- //     itemCount: dummyPosts.length,
- //     itemBuilder: (context, index) {
- //       return PostCard(dummyPosts[index]);
- //     },
-
-
-class ProfileTab extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          CircleAvatar(
-            // Add profile picture logic here
-            backgroundImage: AssetImage('assets/profileimage1.png'),
-            radius: 50.0,
-
-
-          ),
-          Text(
-   //         // Add biography text here
-            'May Green',
-            style: TextStyle(
-              fontSize: 24.0,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          
-    //      Text(
-    //        // Add education information here
-
-
-    //      ),
-        ],
-      ),
-    );
-  }
-}
- 
-
-//class PostFeed extends StatelessWidget {
-//  @override
-//  Widget build(BuildContext context) {
-//    return ListView.builder(
-//      itemCount: dummyPosts.length,
-//      itemBuilder: (context, index) {
-//        return PostCard(dummyPosts[index]);
-//      },
-//    );
-//  }
-//}
-
-class PostCard extends StatefulWidget {
-  final Post post;
-
-  PostCard(this.post);
-
-  @override
-  _PostCardState createState() => _PostCardState();
-}
-
-class _PostCardState extends State<PostCard> {
-  int _upvotes = 0;
-
-  @override
-  void initState() {
-    _upvotes = widget.post.upvotes;
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundImage: NetworkImage(widget.post.userAvatar),
-            ),
-            title: Text(widget.post.userName),
-            subtitle: Text(widget.post.caption),
-          ),
-          Image.network(widget.post.imageURL),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              IconButton(
-                icon: Icon(Icons.thumb_up),
-                onPressed: () {
-                  setState(() {
-                    _upvotes++;
-                  });
-                },
-              ),
-              Text('Upvotes: $_upvotes'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
 }
 
 class Post {
@@ -453,7 +308,7 @@ class Post {
   final String userAvatar;
   final String caption;
   final String imageURL;
- int upvotes;
+  int upvotes;
 
   Post({
     required this.userName,
@@ -464,7 +319,8 @@ class Post {
   });
 }
 
-List<Post> shownPosts = dummyPosts;
+
+
 
 
 List<Post> dummyPosts = [
@@ -491,3 +347,5 @@ List<Post> dummyPosts = [
   ),
   // Add more dummy posts as needed
 ];
+
+
