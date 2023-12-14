@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
-          //width: double.infinity, // Set the width to occupy the entire space
+          //width: double.infinity, 
           //length: 100,
           decoration: BoxDecoration(
             //height: 100,
@@ -258,7 +258,7 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 16.0), // Adjust the top padding value as needed
+      padding: EdgeInsets.only(top: 16.0), 
       child: Container(
         padding: EdgeInsets.all(8.0),
         child: TextField(
@@ -274,7 +274,7 @@ class _SearchBarState extends State<SearchBar> {
               icon: Icon(Icons.clear),
               onPressed: () {
                 _searchController.clear();
-                widget.onSearch(''); // Clear the search query
+                widget.onSearch('');
               },
             ),
             border: OutlineInputBorder(
@@ -379,7 +379,7 @@ class PostFeed extends StatelessWidget {
                               );
                             },
                           ),
-                          // Add your comment section here
+                          
                         ],
                       ),
                     ),
@@ -522,7 +522,7 @@ List<Post> dummyPosts = [
     comments: ["Leo: Omega-3 fatty acids are great for joint health!", "Grace: I take Omega-3 supplements too."],
     upvotes: 3,
   ),
-  // Add more dummy posts as needed
+  
 ];
 
 
