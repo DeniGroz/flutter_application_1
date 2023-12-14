@@ -23,7 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _currentIndex = 0;
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +55,12 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      body: _buildBody(),
+      body: buildBody(),
       bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+        currentIndex: currentIndex,
         onTap: (value) {
           setState(() {
-            _currentIndex = value;
+            currentIndex = value;
           });
         },
         items: [
@@ -81,10 +81,10 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBody() {
-    if (_currentIndex == 0) {
+  Widget buildBody() {
+    if (currentIndex == 0) {
       return FeedPage();
-    } else if (_currentIndex == 1) {
+    } else if (currentIndex == 1) {
       return ProfilePage();
     } else {
       return FeedPage();
@@ -94,10 +94,10 @@ class _HomePageState extends State<HomePage> {
 
 class FeedPage extends StatefulWidget {
   @override
-  _FeedPageState createState() => _FeedPageState();
+  FeedPageState createState() => FeedPageState();
 }
 
-class _FeedPageState extends State<FeedPage> {
+class FeedPageState extends State<FeedPage> {
   late List<Post> shownPosts;
 
   @override
@@ -237,21 +237,21 @@ class SearchBar extends StatefulWidget {
   SearchBar({required this.onSearch});
 
   @override
-  _SearchBarState createState() => _SearchBarState();
+  SearchBarState createState() => SearchBarState();
 }
 
-class _SearchBarState extends State<SearchBar> {
-  late TextEditingController _searchController;
+class SearchBarState extends State<SearchBar> {
+  late TextEditingController searchController;
 
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController();
+    searchController = TextEditingController();
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    searchController.dispose();
     super.dispose();
   }
 
@@ -262,7 +262,7 @@ class _SearchBarState extends State<SearchBar> {
       child: Container(
         padding: EdgeInsets.all(8.0),
         child: TextField(
-          controller: _searchController,
+          controller: searchController,
           onChanged: (query) {
             widget.onSearch(query);
           },
@@ -273,7 +273,7 @@ class _SearchBarState extends State<SearchBar> {
             suffixIcon: IconButton(
               icon: Icon(Icons.clear),
               onPressed: () {
-                _searchController.clear();
+                searchController.clear();
                 widget.onSearch('');
               },
             ),
