@@ -280,9 +280,9 @@ class PostFeed extends StatelessWidget {
                     IconButton(
                       icon: Icon(Icons.thumb_up),
                       onPressed: () {
-                        // Update the upvotes locally
+                        
                         post.upvotes++;
-                        // You may want to send the updated post to a backend server here
+                        
                       },
                     ),
                     SizedBox(width: 8.0),
