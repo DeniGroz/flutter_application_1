@@ -128,10 +128,7 @@ class FeedPageState extends State<FeedPage> {
 
   void filterPosts(String query) {
     if (query.isNotEmpty) {
-      final filteredPosts = dummyPosts
-          .where((post) =>
-              post.caption.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      final filteredPosts = dummyPosts.where((post) =>post.caption.toLowerCase().contains(query.toLowerCase())).toList();
       filteredPosts.sort((a, b) => b.upvotes.compareTo(a.upvotes));
       setState(() {
         shownPosts = filteredPosts;
